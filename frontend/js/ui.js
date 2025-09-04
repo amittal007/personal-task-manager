@@ -1,116 +1,122 @@
 // frontend/js/ui.js
 
 const ui = {
-    elements: {
-        taskListBody: document.getElementById('task-list-body'), // Changed from taskList
-        newTaskBtn: document.getElementById('new-task-btn'),
-        taskModal: $('#task-modal'),
-        modalTitle: document.getElementById('modal-title'),
-        saveTaskBtn: document.getElementById('save-task-btn'),
+    // Selectors for DOM elements
+    selectors: {
+        taskList: document.getElementById('task-list-body'),
         taskForm: document.getElementById('task-form'),
-        taskId: document.getElementById('task-id'),
-        taskHeading: document.getElementById('task-heading'),
-        taskDescription: document.getElementById('task-description'),
-        dueDate: document.getElementById('due-date'),
-        taskStatus: document.getElementById('task-status')
+        formTitle: document.getElementById('form-title'),
+        taskTitleInput: document.getElementById('task-title'),
+        taskDescInput: document.getElementById('task-description'),
+        taskDueDateInput: document.getElementById('task-due-date'),
+        taskStatusInput: document.getElementById('task-status'),
+        taskIdInput: document.getElementById('task-id'),
+        formModal: document.getElementById('task-modal'),
+        newTaskButton: document.getElementById('new-task-btn'),
+        cancelButton: document.getElementById('cancel-btn'),
     },
 
-    statusColors: {
-        'Pending': 'grey',
-        'In Progress': 'blue',
-        'Completed': 'green'
+    // Initialize the Semantic UI modal
+    initModal: () => {
+        // Using vanilla JS to control the modal visibility
+        ui.selectors.newTaskButton.addEventListener('click', () => {
+            ui.prepareForm(); // Prepare form for a new task
+        });
+
+        ui.selectors.cancelButton.addEventListener('click', () => {
+            ui.hideModal();
+        });
+    },
+    
+    // Show the modal
+    showModal: () => {
+        ui.selectors.formModal.classList.add('active');
     },
 
-    // NEW: Function to create a table row <tr> for a task
-    createTaskTableRow: function(task) {
-        const row = document.createElement('tr');
-        // Add a class if the task is completed for special styling
-        if (task.Status === 'Completed') {
-            row.classList.add('completed-task');
-        }
-
-        const dueDate = task.DueDate ? new Date(task.DueDate + 'T00:00:00') : null;
-        const formattedDate = dueDate ? dueDate.toLocaleDateString() : 'N/A';
-        const statusColor = this.statusColors[task.Status] || 'grey';
-
-        // The "Mark as Completed" button is disabled if the task is already completed
-        const completeButton = `
-            <button 
-                class="ui icon button tiny green complete-btn" 
-                data-id="${task.TaskID}" 
-                ${task.Status === 'Completed' ? 'disabled' : ''}
-            >
-                <i class="check icon"></i>
-            </button>
-        `;
-
-        row.innerHTML = `
-            <td><div class="ui ${statusColor} label">${task.Status}</div></td>
-            <td>
-                <b>${task.TaskHeading}</b>
-                <p>${task.TaskDescription || ''}</p>
-            </td>
-            <td>${formattedDate}</td>
-            <td class="center aligned">
-                <div class="ui buttons">
-                    ${completeButton}
-                    <button class="ui icon button tiny edit-btn" data-id="${task.TaskID}"><i class="edit icon"></i></button>
-                    <button class="ui icon button tiny red delete-btn" data-id="${task.TaskID}"><i class="trash icon"></i></button>
-                </div>
-            </td>
-        `;
-        return row;
+    // Hide the modal
+    hideModal: () => {
+        ui.selectors.formModal.classList.remove('active');
     },
+    
+    // Render all tasks in the table
+    renderTasks: (tasks) => {
+        const { taskList } = ui.selectors;
+        taskList.innerHTML = ''; // Clear existing tasks
 
-    // UPDATED: Renders tasks into the table body
-    renderTasks: function(tasks) {
-        this.elements.taskListBody.innerHTML = ''; // Clear the table body
         if (tasks.length === 0) {
-            this.elements.taskListBody.innerHTML = '<tr><td colspan="4" class="center aligned">No tasks yet. Add one!</td></tr>';
+            taskList.innerHTML = '<tr><td colspan="5" style="text-align:center;">No tasks yet. Add one!</td></tr>';
             return;
         }
+
         tasks.forEach(task => {
-            const taskRow = this.createTaskTableRow(task);
-            this.elements.taskListBody.appendChild(taskRow);
+            const tr = document.createElement('tr');
+            tr.dataset.id = task.TaskID;
+            if (task.Status === 'Completed') {
+                tr.classList.add('completed-task');
+            }
+
+            // Format dates for better readability
+            const createdAt = new Date(task.CreatedAt).toLocaleDateString();
+            const dueDate = new Date(task.DueDate).toLocaleDateString();
+            
+            // The `data-label` attribute is crucial for the mobile view
+            tr.innerHTML = `
+                <td data-label="Status">
+                    <span class="ui ${task.Status === 'Completed' ? 'green' : 'grey'} label">${task.Status}</span>
+                </td>
+                <td data-label="Task">
+                    <div class="task-heading">${task.TaskHeading}</div>
+                    <div class="task-description">${task.TaskDescription}</div>
+                </td>
+                <td data-label="Due Date">${dueDate}</td>
+                <td data-label="Created">${createdAt}</td>
+                <td class="actions-cell">
+                    <button class="ui mini green icon button complete-btn" title="Mark as Completed">
+                        <i class="check icon"></i>
+                    </button>
+                    <button class="ui mini blue icon button edit-btn" title="Edit Task">
+                        <i class="edit icon"></i>
+                    </button>
+                    <button class="ui mini red icon button delete-btn" title="Delete Task">
+                        <i class="trash icon"></i>
+                    </button>
+                </td>
+            `;
+            taskList.appendChild(tr);
         });
     },
 
-    clearModalForm: function() {
-        this.elements.taskForm.reset();
-        this.elements.taskId.value = '';
+    // Prepare the form for editing an existing task
+    prepareForm: (task = null) => {
+        const { formTitle, taskTitleInput, taskDescInput, taskDueDateInput, taskStatusInput, taskIdInput } = ui.selectors;
+
+        if (task) {
+            // Editing an existing task
+            formTitle.textContent = 'Edit Task';
+            taskIdInput.value = task.TaskID;
+            taskTitleInput.value = task.TaskHeading;
+            taskDescInput.value = task.TaskDescription;
+            // Format date for input field: YYYY-MM-DD
+            taskDueDateInput.value = new Date(task.DueDate).toISOString().split('T')[0];
+            taskStatusInput.value = task.Status;
+        } else {
+            // Creating a new task
+            formTitle.textContent = 'Create New Task';
+            ui.selectors.taskForm.reset();
+            taskIdInput.value = '';
+        }
+        ui.showModal();
     },
 
-    openNewTaskModal: function() {
-        this.clearModalForm();
-        this.elements.modalTitle.textContent = 'Create New Task';
-        this.elements.taskModal.modal('show');
-    },
-
-
-
-    openEditTaskModal: function(task) {
-        this.clearModalForm();
-        this.elements.modalTitle.textContent = 'Edit Task';
-        
-        this.elements.taskId.value = task.TaskID;
-        this.elements.taskHeading.value = task.TaskHeading;
-        this.elements.taskDescription.value = task.TaskDescription;
-        this.elements.dueDate.value = task.DueDate;
-        $('#task-status').dropdown('set selected', task.Status);
-
-        this.elements.taskModal.modal('show');
-    },
-
-    closeModal: function() {
-        this.elements.taskModal.modal('hide');
-    },
-
-    getFormData: function() {
+    // Get form data for submission
+    getFormData: () => {
+        const { taskTitleInput, taskDescInput, taskDueDateInput, taskStatusInput, taskIdInput } = ui.selectors;
         return {
-            TaskHeading: this.elements.taskHeading.value,
-            TaskDescription: this.elements.taskDescription.value,
-            DueDate: this.elements.dueDate.value,
-            Status: this.elements.taskStatus.value
+            TaskID: taskIdInput.value,
+            TaskHeading: taskTitleInput.value,
+            TaskDescription: taskDescInput.value,
+            DueDate: taskDueDateInput.value,
+            Status: taskStatusInput.value
         };
     }
 };
