@@ -1,4 +1,5 @@
 **Personal Task Manager - Full-Stack Application**
+
 A clean and efficient personal task management application built with a Python/Flask backend, a SQLite database, and a vanilla JavaScript frontend styled with Semantic UI. This project allows users to seamlessly create, view, update, and delete tasks through a responsive, table-based interface.
 
 **Live Demo**
@@ -24,17 +25,17 @@ Modular Codebase: The backend and frontend code are organized into separate, mai
 
 **Tech Stack**
 
-Category Technology
+Category           Technology
 
-Backend Python, Flask, Flask-CORS, SQLite
+Backend            Python, Flask, Flask-CORS, SQLite
 
-Frontend HTML5, CSS3, Vanilla JavaScript
+Frontend           HTML5, CSS3, Vanilla JavaScript
 
-Styling Semantic UI
+Styling            Semantic UI
 
-Deployment PythonAnywhere (Backend), Netlify (Frontend)
+Deployment         PythonAnywhere (Backend), Netlify (Frontend)
 
-Version Control Git & GitHub
+Version Control    Git & GitHub
 
 **How to Set Up and Run Locally**
 
