@@ -1,12 +1,13 @@
-Personal Task Manager - Full-Stack Application
+**Personal Task Manager - Full-Stack Application**
 A clean and efficient personal task management application built with a Python/Flask backend, a SQLite database, and a vanilla JavaScript frontend styled with Semantic UI. This project allows users to seamlessly create, view, update, and delete tasks through a responsive, table-based interface.
 
-Live Demo
+**Live Demo**
 Frontend Application (Netlify): https://mypersonaltaskmanager.netlify.app/
 
 Backend API Endpoint (PythonAnywhere): https://personaltaskmanager.pythonanywhere.com/api/tasks
 
-Features
+**Features**
+
 Full CRUD Functionality: Create, Read, Update, and Delete tasks.
 
 Persistent Storage: Tasks are saved in a SQLite database.
@@ -21,35 +22,26 @@ Responsive Design: User-friendly experience across different screen sizes.
 
 Modular Codebase: The backend and frontend code are organized into separate, maintainable modules.
 
-Tech Stack
-Category
+**Tech Stack**
 
-Technology
+Category Technology
 
-Backend
+Backend Python, Flask, Flask-CORS, SQLite
 
-Python, Flask, Flask-CORS, SQLite
+Frontend HTML5, CSS3, Vanilla JavaScript
 
-Frontend
+Styling Semantic UI
 
-HTML5, CSS3, Vanilla JavaScript
+Deployment PythonAnywhere (Backend), Netlify (Frontend)
 
-Styling
+Version Control Git & GitHub
 
-Semantic UI
+**How to Set Up and Run Locally**
 
-Deployment
-
-PythonAnywhere (Backend), Netlify (Frontend)
-
-Version Control
-
-Git & GitHub
-
-How to Set Up and Run Locally
 Follow these instructions to get the project running on your local machine.
 
-Prerequisites
+**Prerequisites**
+
 Python 3.8 or newer
 
 pip (Python package installer)
@@ -59,7 +51,8 @@ A web browser
 1. Clone the Repository
    First, clone the project repository from GitHub to your local machine:
 
-git clone <your-github-repository-url>
+git clone "https://github.com/amittal007/personal-task-manager.git"
+
 cd personal-task-manager
 
 2. Backend Setup
@@ -67,28 +60,29 @@ cd personal-task-manager
 
 cd backend
 
-Create and activate a virtual environment:
+**Create and activate a virtual environment:**
 
-On macOS/Linux:
+**On macOS/Linux:**
 
 python3 -m venv venv
 source venv/bin/activate
 
-On Windows:
+**On Windows:**
 
 python -m venv venv
 .\venv\Scripts\activate
 
-Install the required packages:
+**Install the required packages:**
 
 pip install Flask Flask-Cors
 
-Initialize the database:
+**Initialize the database:**
+
 Run the database.py script once to create the instance folder and the tasks.db file.
 
 python database.py
 
-Run the Flask server:
+**Run the Flask server:**
 
 python app.py
 
