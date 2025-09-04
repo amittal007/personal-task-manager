@@ -4,9 +4,8 @@ from flask import request, jsonify
 import sqlite3
 import os
 
-# --- Robust Path Configuration ---
-# This ensures the API always knows where to find the database,
-# regardless of where the app is run from.
+
+# Get the absolute path of the directory 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE_PATH = os.path.join(BASE_DIR, 'instance', 'tasks.db')
 
@@ -58,7 +57,7 @@ def register_routes(app):
 
         return jsonify(dict(new_task)), 201
     
-    # +++ START OF THE FIX +++
+    
     # GET a single task by ID
     @app.route('/api/tasks/<int:task_id>', methods=['GET'])
     def get_task(task_id):
@@ -70,7 +69,7 @@ def register_routes(app):
             return jsonify({'error': 'Task not found'}), 404
             
         return jsonify(dict(task))
-    # +++ END OF THE FIX +++
+    
 
     # PUT (update) a task by ID
     @app.route('/api/tasks/<int:task_id>', methods=['PUT'])

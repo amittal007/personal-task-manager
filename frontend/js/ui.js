@@ -18,21 +18,26 @@ const ui = {
 
     // Initialize the Semantic UI components
     initialize: () => {
+        // Initialize dropdowns
         $('.ui.dropdown').dropdown();
+
+        // Attach event listener for the "New Task" button
         ui.selectors.newTaskButton.addEventListener('click', () => {
-            ui.prepareForm();
+            ui.prepareForm(); // Prepare form for adding a new task
         });
+
+        // Configure the main task modal
         ui.selectors.taskModal.modal({
             closable: true,
-            onDeny: () => true,
-            onApprove: () => false
+            onDeny: () => true, // Allows the "Cancel" button to close the modal
+            onApprove: () => false // Prevents the "Save" button from closing the modal automatically
         });
     },
     
     // Render all tasks in the table
     renderTasks: (tasks) => {
         const { taskListBody } = ui.selectors;
-        taskListBody.innerHTML = '';
+        taskListBody.innerHTML = ''; // Clear existing tasks
 
         if (!tasks || tasks.length === 0) {
             taskListBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No tasks found. Click "New Task" to add one!</td></tr>';
@@ -49,34 +54,26 @@ const ui = {
             const createdAt = new Date(task.CreatedAt).toLocaleDateString();
             const dueDate = new Date(task.DueDate).toLocaleDateString();
             
-            // CRITICAL CHANGE: Each cell's content is now wrapped in a <span>
-            // This ensures flexbox `space-between` works correctly on mobile.
             tr.innerHTML = `
                 <td data-label="Status">
-                    <span>
-                        <span class="ui ${task.Status === 'Completed' ? 'green' : task.Status === 'In Progress' ? 'blue' : 'grey'} mini label">${task.Status}</span>
-                    </span>
+                    <span class="ui ${task.Status === 'Completed' ? 'green' : task.Status === 'In Progress' ? 'blue' : 'grey'} mini label">${task.Status}</span>
                 </td>
                 <td data-label="Task">
-                    <span>
-                        <div class="task-heading">${task.TaskHeading}</div>
-                        <div class="task-description">${task.TaskDescription || ''}</div>
-                    </span>
+                    <div class="task-heading">${task.TaskHeading}</div>
+                    <div class="task-description">${task.TaskDescription || ''}</div>
                 </td>
-                <td data-label="Due Date"><span>${dueDate}</span></td>
-                <td data-label="Created"><span>${createdAt}</span></td>
-                <td class="actions-cell" data-label="Actions">
-                    <span>
-                        <button class="ui mini ${task.Status === 'Completed' ? 'orange' : 'green'} icon button complete-btn" title="${task.Status === 'Completed' ? 'Mark as Pending' : 'Mark as Completed'}">
-                            <i class="${task.Status === 'Completed' ? 'undo' : 'check'} icon"></i>
-                        </button>
-                        <button class="ui mini blue icon button edit-btn" title="Edit Task">
-                            <i class="edit icon"></i>
-                        </button>
-                        <button class="ui mini red icon button delete-btn" title="Delete Task">
-                            <i class="trash icon"></i>
-                        </button>
-                    </span>
+                <td data-label="Due Date">${dueDate}</td>
+                <td data-label="Created">${createdAt}</td>
+                <td class="actions-cell">
+                    <button class="ui mini ${task.Status === 'Completed' ? 'orange' : 'green'} icon button complete-btn" title="${task.Status === 'Completed' ? 'Mark as Pending' : 'Mark as Completed'}">
+                        <i class="${task.Status === 'Completed' ? 'undo' : 'check'} icon"></i>
+                    </button>
+                    <button class="ui mini blue icon button edit-btn" title="Edit Task">
+                        <i class="edit icon"></i>
+                    </button>
+                    <button class="ui mini red icon button delete-btn" title="Delete Task">
+                        <i class="trash icon"></i>
+                    </button>
                 </td>
             `;
             taskListBody.appendChild(tr);
@@ -122,8 +119,8 @@ const ui = {
         ui.selectors.deleteConfirmModal
             .modal({
                 closable: false,
-                onDeny: () => true,
-                onApprove: () => {
+                onDeny: () => true, // Callback for "No"
+                onApprove: () => {   // Callback for "Yes, Delete"
                     callback();
                 }
             })

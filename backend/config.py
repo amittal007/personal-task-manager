@@ -2,7 +2,7 @@
 
 import os
 
-# Get the absolute path of the directory the script is in
+# Get the absolute path of the directory 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Define the database URI

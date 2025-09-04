@@ -43,20 +43,16 @@ h1.ui.header {
     color: #777;
 }
 
-/* =============================================== */
+
 /* Responsive Design for Mobile (Horizontal Scroll) */
-/* =============================================== */
 
 @media (max-width: 767px) {
-    /* This makes the table element itself scrollable horizontally.
-      It's a clean and simple way to ensure tables are usable on small screens
-      without distorting their layout.
-    */
+    
     .ui.table {
         display: block;
         width: 100%;
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch; /* Provides a smoother scrolling experience on iOS */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     }
 }
 

@@ -2,11 +2,13 @@
 import sqlite3
 import os
 
-# --- Robust Path Configuration ---
-# Get the absolute path of the directory where this script is located (i.e., the 'backend' folder)
+
+# Get the absolute path of the directory 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Define the path for the 'instance' folder inside 'backend'
 INSTANCE_FOLDER = os.path.join(BASE_DIR, 'instance')
+
 # Define the full path to the database file
 DATABASE_PATH = os.path.join(INSTANCE_FOLDER, 'tasks.db')
 

@@ -29,11 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
             ui.renderTasks(tasks);
         } catch (error) {
             console.error('Failed to save task:', error);
-            // Future improvement: show an error message in the UI
+            alert('An error occurred while saving the task. Please try again.');
         }
     });
 
-    // Use event delegation to handle clicks on task action buttons
+    // Event delegation for task action buttons (Edit, Delete, Mark as Completed)
     taskListBody.addEventListener('click', async (event) => {
         const button = event.target.closest('button');
         if (!button) return;
