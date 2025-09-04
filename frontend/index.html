@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <!-- Semantic UI CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="ui container">
+        <div class="ui huge header centered">Task Manager</div>
+        <div class="ui divider"></div>
+        <button id="new-task-btn" class="ui primary button">
+            <i class="plus icon"></i>
+            New Task
+        </button>
+        
+        <!-- Task Table -->
+        <table class="ui celled striped table" id="task-table">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Task Heading</th>
+                    <th>Due Date</th>
+                    <th class="center aligned">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="task-list-body">
+                <!-- Task rows will be inserted here by ui.js -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Semantic UI Modal for Creating/Editing Tasks -->
+    <div id="task-modal" class="ui modal">
+        <div class="header" id="modal-title">Create New Task</div>
+        <div class="content">
+            <form id="task-form" class="ui form">
+                <input type="hidden" id="task-id">
+                <div class="field required">
+                    <label>Task Heading</label>
+                    <input type="text" id="task-heading" placeholder="e.g., Finish project report">
+                </div>
+                <div class="field">
+                    <label>Description</label>
+                    <textarea id="task-description" rows="3" placeholder="Add more details..."></textarea>
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Due Date</label>
+                        <input type="date" id="due-date">
+                    </div>
+                    <div class="field">
+                        <label>Status</label>
+                        <select id="task-status" class="ui dropdown">
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="actions">
+            <button class="ui deny button">Cancel</button>
+            <button id="save-task-btn" class="ui approve positive button">Save</button>
+        </div>
+    </div>
+
+    <!-- JQuery (required for Semantic UI) and our scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.5.0/semantic.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
+
