@@ -1,11 +1,17 @@
 // frontend/js/api.js
 
-const API_BASE_URL = 'https://personaltaskmanager.pythonanywhere.com/api';
+const API_BASE_URL = 'https://personaltaskmanager.pythonanywhere.com/api'; // Live API URL
 
 const api = {
-    getTasks: async () => {
+    fetchTasks: async () => {
         const response = await fetch(`${API_BASE_URL}/tasks`);
         if (!response.ok) throw new Error('Failed to fetch tasks');
+        return response.json();
+    },
+
+    fetchTaskById: async (taskId) => {
+        const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`);
+        if (!response.ok) throw new Error(`Failed to fetch task ${taskId}`);
         return response.json();
     },
 
@@ -37,3 +43,4 @@ const api = {
         return response.json();
     }
 };
+

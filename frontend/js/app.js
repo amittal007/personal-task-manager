@@ -1,95 +1,86 @@
 // frontend/js/app.js
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize UI components like modals and dropdowns
+    ui.initialize();
+    
+    // Initial fetch of tasks when the page loads
+    api.fetchTasks().then(ui.renderTasks).catch(err => {
+        console.error(err);
+        // Display a user-friendly error message in the table
+        ui.renderTasks(null); 
+    });
 
-    const loadTasks = async () => {
+    const { taskForm, taskListBody, taskModal } = ui.selectors;
+
+    // Handle form submission for creating or updating a task
+    taskForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = ui.getFormData();
+        
         try {
-            const tasks = await api.getTasks();
+            if (formData.TaskID) {
+                await api.updateTask(formData.TaskID, formData);
+            } else {
+                await api.createTask(formData);
+            }
+            taskModal.modal('hide');
+            const tasks = await api.fetchTasks();
             ui.renderTasks(tasks);
         } catch (error) {
-            console.error(error);
-            alert('Could not load tasks.');
-        }
-    };
-
-    ui.elements.newTaskBtn.addEventListener('click', () => {
-        ui.openNewTaskModal();
-    });
-
-    ui.elements.saveTaskBtn.addEventListener('click', async () => {
-        const taskId = ui.elements.taskId.value;
-        const taskData = ui.getFormData();
-
-        if (!taskData.TaskHeading) {
-            alert('Task Heading is required.');
-            return;
-        }
-
-        try {
-            if (taskId) {
-                await api.updateTask(taskId, taskData);
-            } else {
-                await api.createTask(taskData);
-            }
-            ui.closeModal();
-            loadTasks();
-        } catch (error) {
-            console.error(error);
-            alert('Failed to save the task.');
+            console.error('Failed to save task:', error);
+            // Future improvement: show an error message in the UI
         }
     });
 
-    // UPDATED: Changed from taskList to taskListBody
-    ui.elements.taskListBody.addEventListener('click', async (event) => {
-        const target = event.target;
-        // Use .closest() to find the button and then the table row
-        const button = target.closest('button');
+    // Use event delegation to handle clicks on task action buttons
+    taskListBody.addEventListener('click', async (event) => {
+        const button = event.target.closest('button');
         if (!button) return;
 
-        const taskId = button.dataset.id;
+        const tr = button.closest('tr');
+        const taskId = tr.dataset.id;
 
-        // Handle Delete
+        // Handle Delete Button
         if (button.classList.contains('delete-btn')) {
-            if (confirm('Are you sure you want to delete this task?')) {
+            // Use the custom confirmation modal instead of the browser's confirm()
+            ui.showDeleteConfirmation(async () => {
                 try {
                     await api.deleteTask(taskId);
-                    loadTasks();
+                    tr.remove(); // Remove the row from the UI immediately
                 } catch (error) {
-                    console.error(error);
-                    alert('Failed to delete task.');
+                    console.error('Failed to delete task:', error);
                 }
-            }
+            });
         }
 
-        // Handle Edit
+        // Handle Edit Button
         if (button.classList.contains('edit-btn')) {
             try {
-                const tasks = await api.getTasks();
-                const taskToEdit = tasks.find(t => t.TaskID == taskId);
-                if (taskToEdit) {
-                    ui.openEditTaskModal(taskToEdit);
-                }
+                const task = await api.fetchTaskById(taskId);
+                ui.prepareForm(task); // Open the modal with the task's data
             } catch (error) {
-                console.error(error);
-                alert('Could not fetch task details.');
+                console.error(`Failed to fetch task ${taskId} for editing:`, error);
             }
         }
         
-        // NEW: Handle Mark as Completed
+        // Handle Mark as Completed/Pending Button (Toggle)
         if (button.classList.contains('complete-btn')) {
             try {
-                // We only need to send the new status
-                await api.updateTask(taskId, { Status: 'Completed' });
-                loadTasks(); // Refresh list to show updated status
+                const task = await api.fetchTaskById(taskId);
+                // Toggle the status
+                const newStatus = task.Status === 'Completed' ? 'Pending' : 'Completed';
+                const updatedTaskData = { ...task, Status: newStatus };
+                
+                await api.updateTask(taskId, updatedTaskData);
+                
+                // Refresh the entire list to reflect the change
+                const tasks = await api.fetchTasks();
+                ui.renderTasks(tasks);
             } catch (error) {
-                console.error(error);
-                alert('Failed to mark task as completed.');
+                console.error(`Failed to update task ${taskId} status:`, error);
             }
         }
     });
-
-    $('.ui.dropdown').dropdown();
-
-    loadTasks();
 });
 

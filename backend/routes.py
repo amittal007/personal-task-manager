@@ -31,7 +31,6 @@ def register_routes(app):
         except sqlite3.OperationalError:
             return jsonify({"error": "Database not found or table missing. Have you run database.py?"}), 500
 
-
     # POST a new task
     @app.route('/api/tasks', methods=['POST'])
     def add_task():
@@ -43,12 +42,13 @@ def register_routes(app):
         heading = data['TaskHeading']
         description = data.get('TaskDescription', '')
         due_date = data.get('DueDate')
+        status = data.get('Status', 'Pending') # Added status handling
 
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(
-            'INSERT INTO tasks (TaskHeading, TaskDescription, DueDate) VALUES (?, ?, ?)',
-            (heading, description, due_date)
+            'INSERT INTO tasks (TaskHeading, TaskDescription, DueDate, Status) VALUES (?, ?, ?, ?)',
+            (heading, description, due_date, status)
         )
         new_task_id = cursor.lastrowid
         conn.commit()
@@ -57,6 +57,20 @@ def register_routes(app):
         conn.close()
 
         return jsonify(dict(new_task)), 201
+    
+    # +++ START OF THE FIX +++
+    # GET a single task by ID
+    @app.route('/api/tasks/<int:task_id>', methods=['GET'])
+    def get_task(task_id):
+        conn = get_db_connection()
+        task = conn.execute('SELECT * FROM tasks WHERE TaskID = ?', (task_id,)).fetchone()
+        conn.close()
+        
+        if task is None:
+            return jsonify({'error': 'Task not found'}), 404
+            
+        return jsonify(dict(task))
+    # +++ END OF THE FIX +++
 
     # PUT (update) a task by ID
     @app.route('/api/tasks/<int:task_id>', methods=['PUT'])
@@ -72,7 +86,6 @@ def register_routes(app):
         fields = []
         params = []
         
-        # Build the update query dynamically based on the data provided
         for key in ['TaskHeading', 'TaskDescription', 'DueDate', 'Status']:
             if key in data:
                 fields.append(f"{key} = ?")
